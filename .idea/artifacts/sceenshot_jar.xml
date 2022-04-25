@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="sceenshot:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/sceenshot_jar</output-path>
+    <root id="archive" name="sceenshot.jar">
+      <element id="module-output" name="sceenshot" />
+    </root>
+  </artifact>
+</component>
