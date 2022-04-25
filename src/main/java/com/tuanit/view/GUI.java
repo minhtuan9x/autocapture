@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Objects;
 
 public class GUI {
@@ -37,8 +39,7 @@ public class GUI {
         addStatus(frame);
         frame.setSize(320, 280);
         frame.setLayout(null);
-
-        JOptionPane.showMessageDialog(null, "Author: Tuan99.IT\nContact: https://www.facebook.com/profile.php?id=100007303694856");
+        //JOptionPane.showMessageDialog(null, "Author: Tuan99.IT\nContact: https://www.facebook.com/profile.php?id=100007303694856");
         frame.setVisible(true);
         hide(frame);
     }
@@ -152,9 +153,21 @@ public class GUI {
         frame.add(jTextArea);
     }
 
-    private void hide(JFrame frame)  {
+    private void hide(JFrame frame) {
         if (SystemTray.isSupported()) {
             frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    Object[] options = {"Yes", "Minimize"};
+                    if (JOptionPane.showOptionDialog(frame,
+                            "Are you sure you want to close this window?", "Close Window?",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]) == JOptionPane.YES_OPTION) {
+                        System.exit(0);
+                    }
+                }
+            });
         }
         SystemTray systemTray = SystemTray.getSystemTray();
         TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/link.png")));
@@ -184,7 +197,7 @@ public class GUI {
 
         try {
             systemTray.add(trayIcon);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
