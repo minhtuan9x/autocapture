@@ -62,7 +62,8 @@ public class ScreenShoot implements Runnable {
             ImageIO.write(screenShot, "JPG", new File(folderLink));
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showConfirmDialog(null,"Error when write Img","Error", JOptionPane.DEFAULT_OPTION);
+            //JOptionPane.showConfirmDialog(null,"Error when write Img","Error", JOptionPane.DEFAULT_OPTION);
+            writeImg(folderLink);
         }
     }
 

@@ -7,6 +7,7 @@ com\tuanit\view\GUI$2.class
 com\tuanit\model\Data.class
 com\tuanit\view\GUI.class
 com\tuanit\service\SocketThread.class
+com\tuanit\service\StatusThread.class
 com\tuanit\view\GUI$4.class
 com\tuanit\Main.class
 com\tuanit\view\GUI$5.class

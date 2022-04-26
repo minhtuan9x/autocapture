@@ -36,7 +36,7 @@ public class GUI {
     JLabel jLabelStatus;
 
     public void show() {
-        JFrame frame = new JFrame("Auto Capture 1.0.2");
+        JFrame frame = new JFrame("Auto Capture 1.0.3");
         SocketThread socketThread = new SocketThread(frame);
         Thread thread = new Thread(socketThread);
         init();
