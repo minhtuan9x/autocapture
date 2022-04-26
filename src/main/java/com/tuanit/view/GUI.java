@@ -2,6 +2,8 @@ package com.tuanit.view;
 
 import com.tuanit.service.ScreenShoot;
 import com.tuanit.model.Data;
+import com.tuanit.service.SocketThread;
+import com.tuanit.service.StatusThread;
 import com.tuanit.util.FileUtil;
 
 import javax.swing.*;
@@ -10,7 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Objects;
 
 public class GUI {
@@ -28,10 +33,12 @@ public class GUI {
     JLabel jLabelFolder;
     JLabel jLabelTime;
     JTextArea jTextArea;
+    JLabel jLabelStatus;
 
     public void show() {
-        JFrame frame = new JFrame("Auto Capture 1.0.1");
-        checkExist(frame);
+        JFrame frame = new JFrame("Auto Capture 1.0.2");
+        SocketThread socketThread = new SocketThread(frame);
+        Thread thread = new Thread(socketThread);
         init();
         dataRead = FileUtil.getObject(Data.class);
         addChooseFolder(frame);
@@ -39,8 +46,11 @@ public class GUI {
         addButtonStart(frame);
         addButtonStop(frame);
         addStatus(frame);
+        addJLabelStatus(frame);
         frame.setSize(320, 280);
+        frame.setLocationRelativeTo(null);
         frame.setLayout(null);
+        thread.start();
         frame.setVisible(true);
         hide(frame);
     }
@@ -53,10 +63,10 @@ public class GUI {
     private void addChooseFolder(JFrame frame) {
         textFieldFolder = new JTextField(Objects.nonNull(dataRead.getFolder()) ? dataRead.getFolder() : "");
         jLabelFolder = new JLabel("Folder: ");
-        textFieldFolder.setBounds(50, 30, 150, 30);
+        textFieldFolder.setBounds(50, 30, 200, 30);
         jLabelFolder.setBounds(50, 0, 200, 30);
-        btnTest = new JButton("X");
-        btnTest.setBounds(200, 30, 50, 30);
+        btnTest = new JButton("ScreenShot");
+        btnTest.setBounds(130, 0, 120, 30);
 
         btnTest.addActionListener(new ActionListener() {
             @Override
@@ -68,7 +78,6 @@ public class GUI {
                 } catch (Exception e2) {
                     JOptionPane.showMessageDialog(null, "Wrong path folder or system exception !!!");
                 }
-
             }
         });
 
@@ -113,13 +122,14 @@ public class GUI {
                 ScreenShoot screenShoot = new ScreenShoot(data.getTime(), data.getFolder());
                 screenShoot.setjTextArea(jTextArea);
                 thread = new Thread(screenShoot);
+                thread.start();
+                addThreadStatus();
                 textFieldFolder.setEnabled(false);
                 textFieldH.setEnabled(false);
                 textFieldM.setEnabled(false);
                 textFieldS.setEnabled(false);
                 b.setEnabled(false);
                 bs.setEnabled(true);
-                thread.start();
                 JOptionPane.showMessageDialog(null, "Started!!!" +
                         "\nTime(ms): " + data.getTime() +
                         "\nDirectory: " + data.getFolder() + "\t(Default path resource)");
@@ -149,7 +159,7 @@ public class GUI {
 
     private void addStatus(JFrame frame) {
         jTextArea = new JTextArea(50, 10);
-        jTextArea.setBounds(20, 170, 350, 40);
+        jTextArea.setBounds(0, 170, 500, 40);
         jTextArea.setEditable(false);
         frame.add(jTextArea);
     }
@@ -174,13 +184,13 @@ public class GUI {
 
         PopupMenu popupMenu = new PopupMenu();
 
-//        MenuItem show = new MenuItem("Show");
-//        show.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                frame.setVisible(true);
-//            }
-//        });
+        MenuItem show = new MenuItem("Show");
+        show.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(true);
+            }
+        });
 
         MenuItem exit = new MenuItem("Exit");
         exit.addActionListener(new ActionListener() {
@@ -190,7 +200,7 @@ public class GUI {
             }
         });
 
-//        popupMenu.add(show);
+        popupMenu.add(show);
         popupMenu.add(exit);
 
         trayIcon.setPopupMenu(popupMenu);
@@ -199,16 +209,20 @@ public class GUI {
             systemTray.add(trayIcon);
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showConfirmDialog(null,e.getMessage(),"Error", JOptionPane.DEFAULT_OPTION);
         }
     }
-    private void checkExist(JFrame jFrame){
-        try {
-            ServerSocket socket = new ServerSocket(8356);
-        }catch (Exception e){
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null,"Application started!!!");
-            System.exit(0);
-        }
 
+    private void addJLabelStatus(JFrame jFrame){
+        jLabelStatus = new JLabel();
+        jLabelStatus.setBounds(0, 0, 200, 30);
+        jFrame.add(jLabelStatus);
     }
+    private void addThreadStatus(){
+        StatusThread statusThread = new StatusThread(thread,jLabelStatus);
+        Thread thread = new Thread(statusThread);
+        thread.start();
+    }
+
+
 }
