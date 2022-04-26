@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.ServerSocket;
 import java.util.Objects;
 
 public class GUI {
@@ -29,7 +30,8 @@ public class GUI {
     JTextArea jTextArea;
 
     public void show() {
-        JFrame frame = new JFrame("Auto Take Screen Shoot");
+        JFrame frame = new JFrame("Auto Capture 1.0.1");
+        checkExist(frame);
         init();
         dataRead = FileUtil.getObject(Data.class);
         addChooseFolder(frame);
@@ -39,7 +41,6 @@ public class GUI {
         addStatus(frame);
         frame.setSize(320, 280);
         frame.setLayout(null);
-        //JOptionPane.showMessageDialog(null, "Author: Tuan99.IT\nContact: https://www.facebook.com/profile.php?id=100007303694856");
         frame.setVisible(true);
         hide(frame);
     }
@@ -155,7 +156,6 @@ public class GUI {
 
     private void hide(JFrame frame) {
         if (SystemTray.isSupported()) {
-            frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -174,13 +174,13 @@ public class GUI {
 
         PopupMenu popupMenu = new PopupMenu();
 
-        MenuItem show = new MenuItem("Show");
-        show.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.setVisible(true);
-            }
-        });
+//        MenuItem show = new MenuItem("Show");
+//        show.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                frame.setVisible(true);
+//            }
+//        });
 
         MenuItem exit = new MenuItem("Exit");
         exit.addActionListener(new ActionListener() {
@@ -190,7 +190,7 @@ public class GUI {
             }
         });
 
-        popupMenu.add(show);
+//        popupMenu.add(show);
         popupMenu.add(exit);
 
         trayIcon.setPopupMenu(popupMenu);
@@ -200,5 +200,15 @@ public class GUI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    private void checkExist(JFrame jFrame){
+        try {
+            ServerSocket socket = new ServerSocket(8356);
+        }catch (Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"Application started!!!");
+            System.exit(0);
+        }
+
     }
 }
